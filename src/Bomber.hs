@@ -68,7 +68,9 @@ dropBombs = do
   stat <- newIORef defStat
   let
     worker = do
-      updateStat stat $ sTryingConnect +~ 1
+      updateStat stat
+        $ (sTryingConnect +~ 1)
+        . (sAttempts +~ 1)
       try go >>= \case
         Left e -> case fromException e of
           Just (_ :: AsyncException) -> return ()
