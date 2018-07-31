@@ -23,6 +23,7 @@ library
   build-depends:       base >= 4.7 && < 5
                      , HsOpenSSL
                      , bytestring
+                     , connection
                      , http-client
                      , http-client-openssl
                      , http-client-tls

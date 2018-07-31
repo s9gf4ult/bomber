@@ -8,6 +8,7 @@ import Control.Exception
 import Control.Monad
 import Data.Foldable
 import Data.Monoid
+import Network.Connection
 import Network.HTTP.Client
 import Network.HTTP.Client.OpenSSL
 import Network.HTTP.Client.TLS
@@ -22,6 +23,7 @@ data Opts = Opts
   , simRequests :: Int
   , target :: String
   , backend :: Backend
+  , validateCert :: Bool
   }
 
 parseOpts :: IO Opts
@@ -32,6 +34,7 @@ parseOpts = execParser $ info (helper <*> parser) infoMod
       <*> (option auto (short 'r' <> help "Simultaneous requests") <|> pure 10)
       <*> (strOption (short 't' <> help "Tagret URI"))
       <*> (option auto (short 'b' <> help "Backend") <|> pure Raw)
+      <*> (switch (long "validate-cert" <> help "Validate SSL certificates (no by default)"))
     infoMod = progDesc "Sends multiple requests to same address"
 
 getManager :: Opts -> IO Manager
@@ -39,7 +42,8 @@ getManager opts = do
   let
     settings' = case backend opts of
       Raw     -> defaultManagerSettings
-      Tls     -> tlsManagerSettings
+      Tls     ->
+        mkManagerSettings (TLSSettingsSimple (not $ validateCert opts) False False) Nothing
       OpenSSL -> opensslManagerSettings context
     settings = settings'
       { managerConnCount = poolSize opts }
