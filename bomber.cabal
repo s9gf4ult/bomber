@@ -17,9 +17,15 @@ library
   hs-source-dirs:      src
   ghc-options:         -Wall
   default-extensions: LambdaCase
+                    , MultiWayIf
                     , NumDecimals
+                    , QuasiQuotes
+                    , RecordWildCards
                     , ScopedTypeVariables
+                    , TemplateHaskell
+                    , TupleSections
   exposed-modules:     Bomber
+                     , Bomber.Stat
   build-depends:       base >= 4.7 && < 5
                      , HsOpenSSL
                      , bytestring
@@ -27,8 +33,10 @@ library
                      , http-client
                      , http-client-openssl
                      , http-client-tls
+                     , http-types
                      , lens
                      , optparse-applicative
+                     , shakespeare
                      , text
   default-language:    Haskell2010
 
