@@ -44,7 +44,11 @@ getManager opts = do
       Raw     -> defaultManagerSettings
       Tls     ->
         mkManagerSettings (TLSSettingsSimple (not $ validateCert opts) False False) Nothing
-      OpenSSL -> opensslManagerSettings context
+      OpenSSL -> opensslManagerSettings $ do
+        ctx <- context
+        unless (validateCert opts) $ do
+          contextSetVerificationMode ctx VerifyNone
+        return ctx
     settings = settings'
       { managerConnCount = poolSize opts }
     wrap = case backend opts of
